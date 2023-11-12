@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  StepHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handler.stepHandler
+      Runtime: nodejs14.x
+      CodeUri: StepHandlerFunction
+    Metadata:
+      SamResourceId: StepHandlerFunction
+  StepHandlerInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: StepHandlerFunction
+      Principal: events.amazonaws.com
+      SourceArn:
+        Fn::GetAtt:
+        - MyEventsRule
+        - Arn
+  MyEventsRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Step Handler
+      EventPattern:
+        source:
+        - custom.orderManager
+        detail-type:
+        - order
+      Targets:
+      - Arn:
+          Fn::GetAtt:
+          - StepHandlerFunction
+          - Arn
+        Id: RuleId
