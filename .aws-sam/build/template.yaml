@@ -26,9 +26,9 @@ Resources:
       Description: Step Handler
       EventPattern:
         source:
-        - custom.orderManager
+        - custom.compass
         detail-type:
-        - order
+        - workflow
       Targets:
       - Arn:
           Fn::GetAtt:
